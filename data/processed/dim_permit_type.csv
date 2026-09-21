@@ -1,0 +1,24 @@
+permit_type_key,permit_type,permit_family,cost_reporting_rate,cost_is_expected
+1,AS Alternative Solution,Building,0.0,False
+2,Building Additions/Alterations,Building,0.8178,True
+3,Building Historical data - Converted,Building,0.1667,False
+4,Change of Use Permit,Building,0.0,False
+5,Conditional Permit,Building,0.0,False
+6,DCs DeferredFees,Building,0.0,False
+7,Demolition Folder (DM),Demolition,0.0503,False
+8,Designated Structures,Trade,0.0597,False
+9,Drain and Site Service,Trade,0.042,False
+10,Fire/Security Upgrade,Building,0.7877,True
+11,Mechanical(MS),Trade,0.0309,False
+12,Multiple Use Permit,Building,0.7746,True
+13,New Building,Building,0.6474,True
+14,New Houses,Building,0.7397,True
+15,Non-Residential Building Permit,Building,0.8442,True
+16,Partial Permit,Building,0.0,False
+17,Plumbing(PS),Trade,0.117,False
+18,Portable Classrooms,Building,0.9696,True
+19,Rental Renovation Licence,Building,0.0,False
+20,Residential Building Permit,Building,0.897,True
+21,Site Inspection(Scarborough),Building,0.0,False
+22,Small Residential Projects,Building,0.7878,True
+23,Temporary Structures,Building,0.0,False

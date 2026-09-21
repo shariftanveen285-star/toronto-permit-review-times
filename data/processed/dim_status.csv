@@ -1,0 +1,22 @@
+status_key,status,status_group
+1,Abandoned,Not Proceeded
+2,Application Acceptable,In Progress
+3,Application On Hold,In Progress
+4,Application Received,In Progress
+5,Approved,In Progress
+6,Cancelled,Not Proceeded
+7,Closed,Completed
+8,Closed - Dormant,Completed
+9,Closed Permit/Incomplete Work,In Progress
+10,Examiner's Notice Sent,In Progress
+11,Inspection,In Progress
+12,Issuance Pending,In Progress
+13,Notice Sent,In Progress
+14,Open,In Progress
+15,Permit Issued,In Progress
+16,Ready for Issuance,In Progress
+17,Refused,Not Proceeded
+18,Response Received,In Progress
+19,Revision Issued,In Progress
+20,Superseded,Not Proceeded
+21,Under Review ,In Progress

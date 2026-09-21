@@ -1,0 +1,8 @@
+# The raw extract is 142 MB — too large for GitHub.
+# README and logs record its source URL, extract date and md5 so the
+# analysis is reproducible without shipping the file.
+data/raw/*.csv
+data/processed/fact_permits.csv
+__pycache__/
+*.pyc
+logs/pipeline_runs.log

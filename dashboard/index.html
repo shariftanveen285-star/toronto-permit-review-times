@@ -1,0 +1,966 @@
+<title>Permit Review Times</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  color-scheme: light;
+  --page:#f9f9f7; --surface:#fcfcfb;
+  --ink:#0b0b0b; --ink-2:#52514e; --muted:#898781;
+  --grid:#e1e0d9; --axis:#c3c2b7; --hair:rgba(11,11,11,.10);
+  --s1:#2a78d6;           /* corrected / true */
+  --s2:#eb6834;           /* raw / misleading */
+  --o1:#86b6ef; --o2:#2a78d6; --o3:#1c5cab;               /* ordinal 3 */
+  --c1:#86b6ef; --c2:#5598e7; --c3:#2a78d6; --c4:#1c5cab; --c5:#104281; /* ordinal 5 */
+  --critical:#d03b3b; --good:#0ca30c;
+  --tint:rgba(42,120,214,.07);
+  /* Masthead band. The lightest step of the same blue ramp the charts use, so
+     the header belongs to the palette rather than sitting beside it. */
+  --band:#cde2fb; --band-ink:#0b0b0b; --band-ink-2:#31527d; --band-edge:#2a78d6;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --page:#0d0d0d; --surface:#1a1a19;
+    --ink:#ffffff; --ink-2:#c3c2b7; --muted:#898781;
+    --grid:#2c2c2a; --axis:#383835; --hair:rgba(255,255,255,.10);
+    --s1:#3987e5; --s2:#d95926;
+    --o1:#9ec5f4; --o2:#3987e5; --o3:#184f95;
+    --c1:#cde2fb; --c2:#9ec5f4; --c3:#5598e7; --c4:#2a78d6; --c5:#184f95;
+    --tint:rgba(57,135,229,.12);
+    --band:#0d366b; --band-ink:#ffffff; --band-ink-2:#9ec5f4; --band-edge:#3987e5;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --page:#0d0d0d; --surface:#1a1a19;
+  --ink:#ffffff; --ink-2:#c3c2b7; --muted:#898781;
+  --grid:#2c2c2a; --axis:#383835; --hair:rgba(255,255,255,.10);
+  --s1:#3987e5; --s2:#d95926;
+  --o1:#9ec5f4; --o2:#3987e5; --o3:#184f95;
+  --c1:#cde2fb; --c2:#9ec5f4; --c3:#5598e7; --c4:#2a78d6; --c5:#184f95;
+  --tint:rgba(57,135,229,.12);
+  --band:#0d366b; --band-ink:#ffffff; --band-ink-2:#9ec5f4; --band-edge:#3987e5;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--page); color:var(--ink);
+  font-family:var(--sans); font-size:16.5px; line-height:1.56;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px; margin:0 auto; padding-block:0 64px; padding-left:16px; padding-right:16px}
+
+/* ---------- masthead: reads like a record sheet ---------- */
+.mast{background:var(--band); color:var(--band-ink);
+      border-bottom:2px solid var(--band-edge); border-radius:2px;
+      margin-left:-16px; margin-right:-16px; margin-bottom:30px;
+      padding:32px 26px 24px}
+@media(min-width:1212px){.mast{margin-left:0; margin-right:0}}
+.ref{font-family:var(--mono); font-size:12.5px; letter-spacing:.085em; text-transform:uppercase;
+     color:var(--band-ink-2); display:flex; flex-wrap:wrap; gap:6px 18px; margin-bottom:14px}
+.ref b{color:var(--band-ink); font-weight:600}
+h1{font-size:clamp(30px,5vw,46px); line-height:1.08; margin:0 0 10px;
+   letter-spacing:-.022em; font-weight:600; text-wrap:balance}
+.dek{font-size:19px; color:var(--band-ink); opacity:.82; max-width:62ch; margin:0 0 4px}
+.mast-foot{display:flex; flex-wrap:wrap; gap:10px 22px; align-items:center;
+           margin-top:18px; font-family:var(--mono); font-size:12.5px;
+           letter-spacing:.055em; text-transform:uppercase; color:var(--band-ink-2)}
+.tbtn{font:inherit; font-family:var(--mono); font-size:12.5px; text-transform:uppercase;
+      letter-spacing:.055em;
+      background:none; border:1px solid var(--band-edge); color:var(--band-ink);
+      padding:6px 12px; border-radius:2px; cursor:pointer}
+.tbtn:hover{background:var(--band-edge); color:#fff}
+.tbtn:focus-visible{outline:2px solid var(--band-edge); outline-offset:2px}
+
+/* ---------- correction notice — the thesis ---------- */
+.notice{border:1px solid var(--hair); border-left:3px solid var(--critical);
+        background:var(--surface); padding:20px 22px; margin-bottom:30px; border-radius:2px}
+.notice .lab{font-family:var(--mono); font-size:12px; letter-spacing:.11em;
+             text-transform:uppercase; color:var(--critical); font-weight:600; margin-bottom:9px}
+.notice h2{font-size:22px; margin:0 0 10px; font-weight:600; letter-spacing:-.01em}
+.notice p{margin:0 0 10px; color:var(--ink-2); font-size:16px; max-width:78ch}
+.notice p:last-child{margin-bottom:0}
+.vs{display:flex; flex-wrap:wrap; gap:8px 26px; margin-top:15px; padding-top:14px;
+    border-top:1px solid var(--hair); font-family:var(--mono); font-size:13.5px}
+.vs span{color:var(--muted)}
+.vs b{color:var(--ink); font-weight:600}
+
+/* ---------- KPI row ---------- */
+.kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1px;
+      background:var(--hair); border:1px solid var(--hair); margin-bottom:34px; border-radius:2px;
+      overflow:hidden}
+.kpi{background:var(--surface); padding:18px 19px 17px}
+.kpi .k{font-family:var(--mono); font-size:12px; letter-spacing:.085em; text-transform:uppercase;
+        color:var(--muted); margin-bottom:10px}
+.kpi .v{font-size:38px; font-weight:600; letter-spacing:-.025em; line-height:1}
+.kpi .n{font-size:14px; color:var(--ink-2); margin-top:8px}
+
+/* ---------- sections & cards ---------- */
+section{margin-bottom:40px}
+.shead{display:flex; align-items:baseline; justify-content:space-between;
+       flex-wrap:wrap; gap:8px; margin-bottom:6px}
+.num{font-family:var(--mono); font-size:12.5px; letter-spacing:.085em; color:var(--muted)}
+h2.sh{font-size:25px; margin:0; font-weight:600; letter-spacing:-.014em}
+.sub{color:var(--ink-2); font-size:16px; margin:0 0 17px; max-width:80ch}
+.card{background:var(--surface); border:1px solid var(--hair); border-radius:2px; padding:18px 16px 12px}
+.pair{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+@media(max-width:860px){.pair{grid-template-columns:1fr}}
+
+/* ---------- legend ---------- */
+.leg{display:flex; flex-wrap:wrap; gap:8px 22px; margin:0 0 14px; padding-left:4px;
+     font-size:15.5px; font-weight:500; color:var(--ink-2)}
+.leg i{display:inline-flex; align-items:center; gap:9px; font-style:normal}
+.sw{width:17px; height:4px; border-radius:2px; flex:none}
+.sw.b{height:14px; width:14px; border-radius:2px}
+
+/* Charts never shrink below a legible floor; they scroll instead.
+   An SVG scaled to a 340px phone renders 15px labels at 5px - unreadable. */
+figure{margin:0; overflow-x:auto; overflow-y:hidden}
+svg{display:block; width:100%; height:auto; overflow:visible; min-width:600px}
+figure.narrow svg{min-width:420px}
+.gl{stroke:var(--grid); stroke-width:1}
+.ax{stroke:var(--axis); stroke-width:1}
+/* Axis labels sit on --ink-2, not --muted: the *grid* stays recessive, the
+   text does not. Mono at 400 renders visibly thinner than the surrounding
+   sans, so these carry 500. */
+.tick{font-family:var(--mono); font-size:16.5px; font-weight:500; fill:var(--ink-2);
+      font-variant-numeric:tabular-nums}
+.tick.sm{font-size:14px; font-weight:400; fill:var(--muted)}
+.dlab{font-size:19px; font-weight:700; font-family:var(--sans); letter-spacing:-.01em}
+.hit{fill:transparent; cursor:pointer}
+
+/* ---------- tooltip ---------- */
+#tip{position:fixed; z-index:50; pointer-events:none; opacity:0; transition:opacity .1s;
+     background:var(--surface); border:1px solid var(--hair); border-radius:3px;
+     padding:11px 13px; font-size:14.5px; box-shadow:0 5px 18px rgba(0,0,0,.14);
+     max-width:288px; color:var(--ink)}
+#tip.on{opacity:1}
+#tip .tt{font-weight:600; margin-bottom:6px; font-size:15px}
+#tip .tr{display:flex; justify-content:space-between; gap:18px; font-family:var(--mono); font-size:13.5px}
+#tip .tr span{color:var(--ink-2)}
+#tip .tn{margin-top:8px; padding-top:7px; border-top:1px solid var(--hair);
+         font-size:13px; color:var(--ink-2); font-family:var(--sans); line-height:1.45}
+
+/* ---------- tables ---------- */
+details.tv{margin-top:10px}
+details.tv summary{font-family:var(--mono); font-size:12.5px; letter-spacing:.075em;
+  text-transform:uppercase; color:var(--muted); cursor:pointer; padding:6px 0; list-style:none}
+details.tv summary::-webkit-details-marker{display:none}
+details.tv summary::before{content:"+ "; color:var(--s1)}
+details.tv[open] summary::before{content:"− "}
+details.tv summary:hover{color:var(--ink)}
+.twrap{overflow-x:auto; margin-top:6px}
+table{border-collapse:collapse; width:100%; font-size:15px; min-width:460px}
+th,td{text-align:right; padding:9px 13px; border-bottom:1px solid var(--hair);
+      font-variant-numeric:tabular-nums}
+th:first-child,td:first-child{text-align:left; font-variant-numeric:normal}
+thead th{font-family:var(--mono); font-size:12px; letter-spacing:.065em; text-transform:uppercase;
+         color:var(--muted); font-weight:500; border-bottom:1px solid var(--axis)}
+tbody tr:hover{background:var(--tint)}
+td.em{font-weight:600}
+
+/* ---------- footer ---------- */
+.foot{border-top:1px solid var(--hair); padding-top:22px; margin-top:46px;
+      font-size:15px; color:var(--ink-2)}
+.foot h3{font-family:var(--mono); font-size:12.5px; letter-spacing:.085em; text-transform:uppercase;
+         color:var(--muted); margin:0 0 11px; font-weight:500}
+.foot ul{margin:0; padding-left:19px} .foot li{margin-bottom:7px}
+.cav{border-left:2px solid var(--axis); padding-left:14px; margin:16px 0 0; color:var(--ink-2); font-size:15px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <div class="ref">
+    <span>City of Toronto · Open Data</span>
+    <span>Cleared Building Permits</span>
+    <span>Rows <b>438,949</b></span>
+    <span>Extract <b>2026-09-20</b></span>
+  </div>
+  <h1>How long does Toronto take to approve a building permit?</h1>
+  <p class="dek">Nine years of permit records, corrected for a sampling bias that makes
+    the City look like it is getting faster when the opposite happened.</p>
+  <div class="mast-foot">
+    <button class="tbtn" id="theme" type="button">Toggle theme</button>
+    <span>Application → issued · median days</span>
+  </div>
+</header>
+
+<div class="notice">
+  <div class="lab">Read this before the charts</div>
+  <h2>The obvious trend in this data is an artifact.</h2>
+  <p>This file contains only permits the City has already closed and filed. A permit applied
+     for recently can only appear in it if it was approved <em>and</em> closed quickly — so
+     recent years contain a survivor sample of fast permits, by construction.</p>
+  <p>Of permits applied for in 2017, 52% had closed within a year. Of those applied for in
+     2026, <strong>100%</strong> had — not because 2026 was efficient, but because nothing
+     slower could yet be in the file. Every chart below applies the same closure rule to
+     every year, so the comparison is like for like.</p>
+  <div class="vs">
+    <span>Uncorrected reading <b>26 → 8 days · “69% faster”</b></span>
+    <span>Corrected <b>20 → 29 → 18 days · worse, then recovered</b></span>
+  </div>
+</div>
+
+<div class="kpis" id="kpis"></div>
+
+<section>
+  <div class="shead"><h2 class="sh">The correction, drawn</h2><span class="num">01</span></div>
+  <p class="sub">Both lines measure the same thing from the same source. The orange line is
+     what the raw file reports. The blue line applies one consistent rule to every year.
+     Where they diverge is where the bias lives.</p>
+  <div class="card">
+    <div class="leg">
+      <i><span class="sw" style="background:var(--s2)"></span>Uncorrected (misleading)</i>
+      <i><span class="sw" style="background:var(--s1)"></span>Like-for-like (used throughout)</i>
+    </div>
+    <figure id="c-trend"></figure>
+    <details class="tv"><summary>Table view</summary><div class="twrap" id="t-trend"></div></details>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><h2 class="sh">Why the raw trend cannot be trusted</h2><span class="num">02</span></div>
+  <p class="sub">Two independent proofs. Left: the share of each year's permits that closed
+     within a year — it climbs to 100% purely because recent slow permits are still open.
+     Right: the longest review the file can even contain, which tracks the calendar rather
+     than anything the City did.</p>
+  <div class="pair">
+    <div class="card">
+      <div class="leg"><i><span class="sw b" style="background:var(--s1)"></span>Closed within one year of issue</i></div>
+      <figure id="c-cen" class="narrow"></figure>
+    </div>
+    <div class="card">
+      <div class="leg"><i><span class="sw b" style="background:var(--s1)"></span>Longest review present in the file</i></div>
+      <figure id="c-max" class="narrow"></figure>
+    </div>
+  </div>
+  <details class="tv"><summary>Table view — censoring evidence</summary><div class="twrap" id="t-cen"></div></details>
+</section>
+
+<section>
+  <div class="shead"><h2 class="sh">Districts differ — but only on complex work</h2><span class="num">03</span></div>
+  <p class="sub">Raw figures suggest East Toronto is far slower than South. Holding the type
+     of permit constant, most of that gap disappears: on simple residential permits three of
+     the four districts sit at exactly 15 days, with West the lone exception at 20. The gap
+     opens up on complex work, and widens as projects get more complex.</p>
+  <div class="card">
+    <div class="leg">
+      <i><span class="sw b" style="background:var(--o1)"></span>Small residential</i>
+      <i><span class="sw b" style="background:var(--o2)"></span>Additions &amp; alterations</i>
+      <i><span class="sw b" style="background:var(--o3)"></span>New houses</i>
+    </div>
+    <figure id="c-dist"></figure>
+    <details class="tv"><summary>Table view</summary><div class="twrap" id="t-dist"></div></details>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><h2 class="sh">Bigger projects wait longer, step by step</h2><span class="num">04</span></div>
+  <p class="sub">Building permits only — trade permits do not carry a construction cost, so
+     including them would average a group that reports cost against one that structurally
+     cannot. Typical waits rise at every step. The tail is far worse than the middle:
+     among projects over $5M the slowest 10% wait <strong>1,036 days</strong>, close to
+     three years. Hover any bar for that figure.</p>
+  <div class="card">
+    <div class="leg">
+      <i><span class="sw b" style="background:var(--o2)"></span>Median days to approve &middot; darker bar = costlier band</i>
+    </div>
+    <figure id="c-cost"></figure>
+    <details class="tv"><summary>Table view</summary><div class="twrap" id="t-cost"></div></details>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><h2 class="sh">By permit type</h2><span class="num">05</span></div>
+  <p class="sub">Types with at least 500 records, slowest first.</p>
+  <div class="card"><div class="twrap" id="t-types"></div></div>
+</section>
+
+<section>
+  <div class="shead"><h2 class="sh">What was wrong with the data</h2><span class="num">06</span></div>
+  <p class="sub">Published rather than hidden. Every issue below was found before any metric
+     was calculated, and none of them produced an error message.</p>
+  <div class="card"><div class="twrap" id="t-qual"></div></div>
+</section>
+
+<div class="foot">
+  <h3>Method &amp; limits</h3>
+  <ul>
+    <li><b>Metric:</b> calendar days from application to issue. Median, not mean — the tail is long enough that a mean describes nobody's actual wait.</li>
+    <li><b>Like-for-like rule:</b> only permits closed within 365 days of issue, applied identically to every year.</li>
+    <li><b>Excluded:</b> issued-to-completed. That is the date the City closed the file, not when building finished — intervals reach 46 years.</li>
+    <li><b>Excluded:</b> 2026. A partial year of closed permits only; its numbers are an artifact of the extract date.</li>
+    <li><b>Excluded:</b> cancelled, refused and never-issued permits, which have no review duration.</li>
+  </ul>
+  <p class="cav"><b>What this cannot tell you.</b> Why any permit was slow. The data has no
+    reviewer, department, hold-reason or resubmission field. The 2021–22 deterioration
+    coincides with pandemic disruption, but nothing here can test that — it is named as a
+    hypothesis, not a conclusion.</p>
+</div>
+</div>
+
+<div id="tip" role="status" aria-live="polite"></div>
+
+<script>
+/* Default to light regardless of OS setting.
+   This is a document, not a monitoring tool - it is opened once, read, and
+   judged. Reports are light; an unexpected black page spends the first
+   impression on a theme choice nobody asked for. Dark stays available behind
+   the toggle, and a viewer's explicit choice is remembered. */
+(function () {
+  let saved = null;
+  try { saved = localStorage.getItem("permit-theme"); } catch (e) { /* blocked */ }
+  document.documentElement.setAttribute("data-theme", saved === "dark" ? "dark" : "light");
+})();
+
+const D = {
+ "trend": [
+  {
+   "year": 2017,
+   "raw": 26.0,
+   "n_raw": 40164,
+   "fair": 20.0,
+   "p90": 91.0,
+   "within30": 0.6581,
+   "n": 20740
+  },
+  {
+   "year": 2018,
+   "raw": 26.0,
+   "n_raw": 38697,
+   "fair": 19.0,
+   "p90": 68.0,
+   "within30": 0.6999,
+   "n": 19470
+  },
+  {
+   "year": 2019,
+   "raw": 28.0,
+   "n_raw": 36457,
+   "fair": 21.0,
+   "p90": 80.0,
+   "within30": 0.6507,
+   "n": 17766
+  },
+  {
+   "year": 2020,
+   "raw": 29.0,
+   "n_raw": 28079,
+   "fair": 22.0,
+   "p90": 93.0,
+   "within30": 0.6129,
+   "n": 13623
+  },
+  {
+   "year": 2021,
+   "raw": 31.0,
+   "n_raw": 30885,
+   "fair": 24.0,
+   "p90": 111.0,
+   "within30": 0.5899,
+   "n": 13827
+  },
+  {
+   "year": 2022,
+   "raw": 34.0,
+   "n_raw": 28253,
+   "fair": 29.0,
+   "p90": 116.0,
+   "within30": 0.5351,
+   "n": 13746
+  },
+  {
+   "year": 2023,
+   "raw": 30.0,
+   "n_raw": 24076,
+   "fair": 27.0,
+   "p90": 114.0,
+   "within30": 0.5613,
+   "n": 14098
+  },
+  {
+   "year": 2024,
+   "raw": 24.0,
+   "n_raw": 23175,
+   "fair": 20.0,
+   "p90": 93.0,
+   "within30": 0.6165,
+   "n": 16097
+  },
+  {
+   "year": 2025,
+   "raw": 19.0,
+   "n_raw": 17620,
+   "fair": 18.0,
+   "p90": 70.0,
+   "within30": 0.6687,
+   "n": 15959
+  },
+  {
+   "year": 2026,
+   "raw": 8.0,
+   "n_raw": 4046,
+   "fair": null,
+   "p90": null,
+   "within30": null,
+   "n": null
+  }
+ ],
+ "censoring": [
+  {
+   "year": 2017,
+   "pct_closed_1yr": 0.5164,
+   "max_observed": 3409,
+   "n": 40164
+  },
+  {
+   "year": 2018,
+   "pct_closed_1yr": 0.5031,
+   "max_observed": 2837,
+   "n": 38697
+  },
+  {
+   "year": 2019,
+   "pct_closed_1yr": 0.4873,
+   "max_observed": 2682,
+   "n": 36457
+  },
+  {
+   "year": 2020,
+   "pct_closed_1yr": 0.4852,
+   "max_observed": 2224,
+   "n": 28079
+  },
+  {
+   "year": 2021,
+   "pct_closed_1yr": 0.4477,
+   "max_observed": 1910,
+   "n": 30885
+  },
+  {
+   "year": 2022,
+   "pct_closed_1yr": 0.4865,
+   "max_observed": 1489,
+   "n": 28253
+  },
+  {
+   "year": 2023,
+   "pct_closed_1yr": 0.5856,
+   "max_observed": 1251,
+   "n": 24076
+  },
+  {
+   "year": 2024,
+   "pct_closed_1yr": 0.6946,
+   "max_observed": 877,
+   "n": 23175
+  },
+  {
+   "year": 2025,
+   "pct_closed_1yr": 0.9057,
+   "max_observed": 573,
+   "n": 17620
+  },
+  {
+   "year": 2026,
+   "pct_closed_1yr": 1.0,
+   "max_observed": 208,
+   "n": 4046
+  }
+ ],
+ "districts": [
+  {
+   "district": "East",
+   "n": 19028,
+   "all": 23.0,
+   "simple": 15.0,
+   "mid": 35.0,
+   "complex": 47.5
+  },
+  {
+   "district": "North",
+   "n": 30728,
+   "all": 23.0,
+   "simple": 15.0,
+   "mid": 31.0,
+   "complex": 35.0
+  },
+  {
+   "district": "South",
+   "n": 72317,
+   "all": 21.0,
+   "simple": 15.0,
+   "mid": 28.0,
+   "complex": 30.5
+  },
+  {
+   "district": "West",
+   "n": 23253,
+   "all": 21.0,
+   "simple": 20.0,
+   "mid": 34.0,
+   "complex": 50.0
+  }
+ ],
+ "cost_bands": [
+  {
+   "band": "under $25k",
+   "n": 12544,
+   "median": 17.0,
+   "p90": 89.0
+  },
+  {
+   "band": "$25k-100k",
+   "n": 12433,
+   "median": 20.0,
+   "p90": 85.0
+  },
+  {
+   "band": "$100k-500k",
+   "n": 10390,
+   "median": 28.0,
+   "p90": 86.0
+  },
+  {
+   "band": "$500k-5M",
+   "n": 3135,
+   "median": 34.0,
+   "p90": 112.0
+  },
+  {
+   "band": "over $5M",
+   "n": 174,
+   "median": 51.0,
+   "p90": 1036.3000000000018
+  }
+ ],
+ "types": [
+  {
+   "type": "Partial Permit",
+   "family": "Building",
+   "n": 658,
+   "median": 202.0,
+   "p90": 631.1000000000005
+  },
+  {
+   "type": "Demolition Folder (DM)",
+   "family": "Demolition",
+   "n": 3653,
+   "median": 52.0,
+   "p90": 206.80000000000018
+  },
+  {
+   "type": "Conditional Permit",
+   "family": "Building",
+   "n": 1613,
+   "median": 46.0,
+   "p90": 145.79999999999995
+  },
+  {
+   "type": "New Houses",
+   "family": "Building",
+   "n": 1895,
+   "median": 40.0,
+   "p90": 482.4000000000012
+  },
+  {
+   "type": "Building Additions/Alterations",
+   "family": "Building",
+   "n": 18497,
+   "median": 29.0,
+   "p90": 80.0
+  },
+  {
+   "type": "Mechanical(MS)",
+   "family": "Trade",
+   "n": 27438,
+   "median": 29.0,
+   "p90": 91.0
+  },
+  {
+   "type": "Plumbing(PS)",
+   "family": "Trade",
+   "n": 30349,
+   "median": 27.0,
+   "p90": 83.0
+  },
+  {
+   "type": "Fire/Security Upgrade",
+   "family": "Building",
+   "n": 3247,
+   "median": 26.0,
+   "p90": 117.40000000000009
+  },
+  {
+   "type": "Designated Structures",
+   "family": "Trade",
+   "n": 5164,
+   "median": 20.0,
+   "p90": 114.69999999999982
+  },
+  {
+   "type": "Small Residential Projects",
+   "family": "Building",
+   "n": 26568,
+   "median": 16.0,
+   "p90": 96.0
+  },
+  {
+   "type": "Temporary Structures",
+   "family": "Building",
+   "n": 755,
+   "median": 8.0,
+   "p90": 29.0
+  },
+  {
+   "type": "Drain and Site Service",
+   "family": "Trade",
+   "n": 25080,
+   "median": 1.0,
+   "p90": 38.0
+  }
+ ],
+ "kpi": {
+  "records": 145326,
+  "permits": 136241,
+  "median": 22.0,
+  "within30": 0.6276
+ },
+ "quality": [
+  {
+   "metric": "Source rows",
+   "value": 438949
+  },
+  {
+   "metric": "Distinct permits",
+   "value": 393521
+  },
+  {
+   "metric": "Row-count overstatement",
+   "value": 45428
+  },
+  {
+   "metric": "Cost field held a placeholder string",
+   "value": 222734
+  },
+  {
+   "metric": "Comma-formatted costs recovered",
+   "value": 51949
+  },
+  {
+   "metric": "Never issued",
+   "value": 34702
+  },
+  {
+   "metric": "Issued before applied",
+   "value": 21
+  },
+  {
+   "metric": "Dates in the future",
+   "value": 3
+  },
+  {
+   "metric": "Unknown district code",
+   "value": 8
+  }
+ ]
+};
+const NS = "http://www.w3.org/2000/svg";
+const cv = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmt = (n) => n == null ? "—" : n.toLocaleString();
+const mk = (t, a = {}) => { const e = document.createElementNS(NS, t);
+  for (const k in a) if (a[k] != null) e.setAttribute(k, a[k]); return e; };
+const tip = document.getElementById("tip");
+
+function show(ev, title, rows, note) {
+  tip.innerHTML = `<div class="tt">${title}</div>` +
+    rows.map(r => `<div class="tr"><span>${r[0]}</span><b>${r[1]}</b></div>`).join("") +
+    (note ? `<div class="tn">${note}</div>` : "");
+  tip.classList.add("on");
+  const b = tip.getBoundingClientRect();
+  let x = ev.clientX + 14, y = ev.clientY - 10;
+  if (x + b.width > innerWidth - 10) x = ev.clientX - b.width - 14;
+  if (y + b.height > innerHeight - 10) y = innerHeight - b.height - 10;
+  tip.style.left = Math.max(8, x) + "px"; tip.style.top = Math.max(8, y) + "px";
+}
+const hide = () => tip.classList.remove("on");
+function hook(el, title, rows, note) {
+  el.addEventListener("mousemove", e => show(e, title, rows, note));
+  el.addEventListener("mouseleave", hide);
+  el.setAttribute("tabindex", "0");
+  el.addEventListener("focus", e => {
+    const r = el.getBoundingClientRect();
+    show({ clientX: r.left + r.width / 2, clientY: r.top }, title, rows, note);
+  });
+  el.addEventListener("blur", hide);
+}
+function table(host, cols, rows) {
+  const t = mk0("table"), th = mk0("thead"), tr = mk0("tr");
+  cols.forEach(c => { const e = mk0("th"); e.textContent = c; tr.appendChild(e); });
+  th.appendChild(tr); t.appendChild(th);
+  const tb = mk0("tbody");
+  rows.forEach(r => { const x = mk0("tr");
+    r.forEach((c, i) => { const d = mk0("td"); d.textContent = c;
+      if (i === 1) d.className = "em"; x.appendChild(d); }); tb.appendChild(x); });
+  t.appendChild(tb); host.innerHTML = ""; host.appendChild(t);
+}
+const mk0 = (t) => document.createElement(t);
+
+/* ------------------------------------------------------------ KPIs */
+(function () {
+  const k = D.kpi, last = D.trend.filter(t => t.fair != null).slice(-1)[0];
+  const worst = D.trend.reduce((a, b) => (b.fair ?? 0) > (a.fair ?? 0) ? b : a);
+  [["Permits analysed", fmt(k.permits), "of 393,521 in the source"],
+   ["Typical wait", k.median + " days", "median, application to issue"],
+   ["Approved within 30 days", Math.round(k.within30 * 100) + "%", "across 2017–2025"],
+   ["Worst year", worst.fair + " days", "in " + worst.year + ", up 45% from 2017"],
+   ["Latest", last.fair + " days", "in " + last.year + " — back to 2017 levels"]
+  ].forEach(([a, b, c]) => {
+    const d = mk0("div"); d.className = "kpi";
+    d.innerHTML = `<div class="k">${a}</div><div class="v">${b}</div><div class="n">${c}</div>`;
+    document.getElementById("kpis").appendChild(d);
+  });
+})();
+
+/* --------------------------------------------------- 01 trend lines */
+function trend() {
+  const W = 960, H = 440, M = { t: 32, r: 78, b: 60, l: 68 };
+  const iw = W - M.l - M.r, ih = H - M.t - M.b;
+  const d = D.trend, maxY = 40;
+  const x = i => M.l + (iw * i) / (d.length - 1);
+  const y = v => M.t + ih - (ih * v) / maxY;
+  const s = mk("svg", { viewBox: `0 0 ${W} ${H}`, role: "img",
+    "aria-label": "Median days to issue by application year, uncorrected versus like-for-like" });
+
+  for (let v = 0; v <= maxY; v += 10) {
+    s.appendChild(mk("line", { x1: M.l, x2: M.l + iw, y1: y(v), y2: y(v), class: "gl" }));
+    const t = mk("text", { x: M.l - 13, y: y(v) + 6, class: "tick", "text-anchor": "end" });
+    t.textContent = v; s.appendChild(t);
+  }
+  s.appendChild(mk("line", { x1: M.l, x2: M.l + iw, y1: y(0), y2: y(0), class: "ax" }));
+  d.forEach((p, i) => {
+    const t = mk("text", { x: x(i), y: H - 26, class: "tick", "text-anchor": "middle" });
+    t.textContent = p.year; s.appendChild(t);
+  });
+  const yl = mk("text", { x: M.l - 12, y: M.t - 11, class: "tick", "text-anchor": "end" });
+  yl.textContent = "days"; s.appendChild(yl);
+
+  const path = (key, col) => {
+    const pts = d.map((p, i) => [i, p[key]]).filter(p => p[1] != null);
+    s.appendChild(mk("path", { d: pts.map((p, j) => (j ? "L" : "M") + x(p[0]) + " " + y(p[1])).join(" "),
+      fill: "none", stroke: col, "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }));
+    pts.forEach(p => {
+      s.appendChild(mk("circle", { cx: x(p[0]), cy: y(p[1]), r: 5.5,
+        fill: col, stroke: cv("--surface"), "stroke-width": 2 }));
+    });
+    return pts;
+  };
+  const rawPts = path("raw", cv("--s2"));
+  const fairPts = path("fair", cv("--s1"));
+
+  const dl = (pts, col, dy, txt) => {
+    const last = pts[pts.length - 1];
+    const t = mk("text", { x: x(last[0]) + 14, y: y(last[1]) + dy, class: "dlab", fill: col });
+    t.textContent = txt; s.appendChild(t);
+  };
+  dl(rawPts, cv("--s2"), 6, "8");
+  dl(fairPts, cv("--s1"), 6, "18");
+
+  // peak callout on the corrected series
+  const pk = d.find(p => p.year === 2022);
+  const pi = d.indexOf(pk);
+  s.appendChild(mk("line", { x1: x(pi), x2: x(pi), y1: y(pk.fair) - 15, y2: y(pk.fair) - 36, class: "ax" }));
+  const pt = mk("text", { x: x(pi), y: y(pk.fair) - 46, class: "dlab", fill: cv("--ink"), "text-anchor": "middle" });
+  pt.textContent = "29 — worst"; s.appendChild(pt);
+
+  d.forEach((p, i) => {
+    const h = mk("rect", { x: x(i) - iw / (d.length - 1) / 2, y: M.t,
+      width: iw / (d.length - 1), height: ih, class: "hit" });
+    hook(h, p.year + " applications",
+      [["Uncorrected", p.raw + " days"],
+       ["Like-for-like", p.fair != null ? p.fair + " days" : "n/a"],
+       ["Records", fmt(p.n ?? p.n_raw)]],
+      p.fair == null ? "2026 is excluded — a partial year of closed permits only." : null);
+    s.appendChild(h);
+  });
+  document.getElementById("c-trend").appendChild(s);
+
+  table(document.getElementById("t-trend"),
+    ["Application year", "Like-for-like median", "Uncorrected median", "Slowest 10%", "Within 30 days", "Records"],
+    d.map(p => [p.year, p.fair != null ? p.fair + " d" : "excluded", p.raw + " d",
+      p.p90 != null ? p.p90 + " d" : "—",
+      p.within30 != null ? Math.round(p.within30 * 100) + "%" : "—", fmt(p.n ?? p.n_raw)]));
+}
+
+/* ---------------------------------------- 02 censoring evidence */
+function bars(hostId, data, valFn, labFn, maxY, fmtVal, tipFn) {
+  const W = 480, H = 310, M = { t: 26, r: 14, b: 58, l: 76 };
+  const iw = W - M.l - M.r, ih = H - M.t - M.b;
+  const bw = iw / data.length, pad = Math.min(9, bw * .22);
+  const y = v => M.t + ih - (ih * v) / maxY;
+  const s = mk("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": hostId });
+  for (let i = 0; i <= 4; i++) {
+    const v = maxY * i / 4;
+    s.appendChild(mk("line", { x1: M.l, x2: M.l + iw, y1: y(v), y2: y(v), class: "gl" }));
+    const t = mk("text", { x: M.l - 11, y: y(v) + 6, class: "tick", "text-anchor": "end" });
+    t.textContent = fmtVal(v); s.appendChild(t);
+  }
+  s.appendChild(mk("line", { x1: M.l, x2: M.l + iw, y1: y(0), y2: y(0), class: "ax" }));
+  data.forEach((p, i) => {
+    const v = valFn(p), bx = M.l + i * bw + pad, w = bw - pad * 2;
+    const hgt = Math.max(1, y(0) - y(v));
+    s.appendChild(mk("rect", { x: bx, y: y(v), width: w, height: hgt,
+      fill: cv("--s1"), rx: 3 }));
+    if (i % 2 === 0 || data.length <= 6) {
+      const t = mk("text", { x: bx + w / 2, y: H - 22, class: "tick", "text-anchor": "middle" });
+      t.textContent = labFn(p); s.appendChild(t);
+    }
+    const h = mk("rect", { x: M.l + i * bw, y: M.t, width: bw, height: ih, class: "hit" });
+    hook(h, ...tipFn(p)); s.appendChild(h);
+  });
+  document.getElementById(hostId).appendChild(s);
+}
+
+/* ------------------------------------------- 03 district grouped */
+function district() {
+  const d = D.districts, keys = [["simple", "--o1", "Small residential"],
+    ["mid", "--o2", "Additions & alterations"], ["complex", "--o3", "New houses"]];
+  const W = 960, H = 430, M = { t: 36, r: 18, b: 80, l: 68 };
+  const iw = W - M.l - M.r, ih = H - M.t - M.b, maxY = 60;
+  const gw = iw / d.length, bw = (gw - 34) / keys.length;
+  const y = v => M.t + ih - (ih * v) / maxY;
+  const s = mk("svg", { viewBox: `0 0 ${W} ${H}`, role: "img",
+    "aria-label": "Median days to issue by district and permit complexity" });
+  for (let v = 0; v <= maxY; v += 15) {
+    s.appendChild(mk("line", { x1: M.l, x2: M.l + iw, y1: y(v), y2: y(v), class: "gl" }));
+    const t = mk("text", { x: M.l - 13, y: y(v) + 6, class: "tick", "text-anchor": "end" });
+    t.textContent = v; s.appendChild(t);
+  }
+  s.appendChild(mk("line", { x1: M.l, x2: M.l + iw, y1: y(0), y2: y(0), class: "ax" }));
+  d.forEach((g, gi) => {
+    keys.forEach((k, ki) => {
+      const v = g[k[0]]; if (v == null) return;
+      const bx = M.l + gi * gw + 17 + ki * bw;
+      s.appendChild(mk("rect", { x: bx + 1, y: y(v), width: bw - 2,
+        height: Math.max(1, y(0) - y(v)), fill: cv(k[1]), rx: 3 }));
+      const t = mk("text", { x: bx + bw / 2, y: y(v) - 12, class: "dlab",
+        fill: cv("--ink-2"), "text-anchor": "middle" });
+      t.textContent = v; s.appendChild(t);
+      const h = mk("rect", { x: bx, y: M.t, width: bw, height: ih, class: "hit" });
+      hook(h, g.district + " — " + k[2], [["Median", v + " days"]],
+        k[0] === "simple"
+          ? (v === 15 ? "Identical to North, South and East. Only West differs."
+                      : "The one district that is slower on simple permits too.")
+          : null);
+      s.appendChild(h);
+    });
+    const t = mk("text", { x: M.l + gi * gw + gw / 2, y: H - 42, class: "tick",
+      "text-anchor": "middle" });
+    t.textContent = g.district; s.appendChild(t);
+    const n = mk("text", { x: M.l + gi * gw + gw / 2, y: H - 20, class: "tick sm",
+      "text-anchor": "middle", opacity: .8 });
+    n.textContent = fmt(g.n) + " records"; s.appendChild(n);
+  });
+  const yl = mk("text", { x: M.l - 12, y: M.t - 11, class: "tick", "text-anchor": "end" });
+  yl.textContent = "days"; s.appendChild(yl);
+  document.getElementById("c-dist").appendChild(s);
+  table(document.getElementById("t-dist"),
+    ["District", "All permits", "Small residential", "Additions & alterations", "New houses", "Records"],
+    d.map(g => [g.district, g.all + " d", g.simple + " d", g.mid + " d", g.complex + " d", fmt(g.n)]));
+}
+
+/* ----------------------------------------------- 04 cost bands */
+function cost() {
+  const d = D.cost_bands, cols = ["--c1", "--c2", "--c3", "--c4", "--c5"];
+  const W = 960, H = 410, M = { t: 40, r: 18, b: 80, l: 68 };
+  const iw = W - M.l - M.r, ih = H - M.t - M.b, maxY = 60;
+  const bw = iw / d.length, pad = bw * .21;
+  const y = v => M.t + ih - (ih * Math.min(v, maxY)) / maxY;
+  const s = mk("svg", { viewBox: `0 0 ${W} ${H}`, role: "img",
+    "aria-label": "Median days to issue by project cost band" });
+  for (let v = 0; v <= maxY; v += 15) {
+    s.appendChild(mk("line", { x1: M.l, x2: M.l + iw, y1: y(v), y2: y(v), class: "gl" }));
+    const t = mk("text", { x: M.l - 13, y: y(v) + 6, class: "tick", "text-anchor": "end" });
+    t.textContent = v; s.appendChild(t);
+  }
+  s.appendChild(mk("line", { x1: M.l, x2: M.l + iw, y1: y(0), y2: y(0), class: "ax" }));
+  d.forEach((p, i) => {
+    const bx = M.l + i * bw + pad, w = bw - pad * 2;
+    s.appendChild(mk("rect", { x: bx, y: y(p.median), width: w,
+      height: Math.max(1, y(0) - y(p.median)), fill: cv(cols[i]), rx: 3 }));
+    const t = mk("text", { x: bx + w / 2, y: y(p.median) - 13, class: "dlab",
+      fill: cv("--ink"), "text-anchor": "middle" });
+    t.textContent = p.median; s.appendChild(t);
+    /* The p90 tick was removed here deliberately. Every band's p90 (85-1,036
+       days) sits above the 60-day scale, so all five clipped to the same line
+       and encoded nothing. The value lives in the tooltip and the table view,
+       where it is exact rather than misleading. */
+    const lb = mk("text", { x: bx + w / 2, y: H - 42, class: "tick", "text-anchor": "middle" });
+    lb.textContent = p.band; s.appendChild(lb);
+    const nb = mk("text", { x: bx + w / 2, y: H - 20, class: "tick sm",
+      "text-anchor": "middle", opacity: .8 });
+    nb.textContent = fmt(p.n); s.appendChild(nb);
+    const h = mk("rect", { x: M.l + i * bw, y: M.t, width: bw, height: ih, class: "hit" });
+    hook(h, p.band, [["Median", p.median + " days"],
+      ["Slowest 10%", Math.round(p.p90) + " days"], ["Records", fmt(p.n)]],
+      "Half of these permits are approved within " + p.median + " days; the slowest 10% "
+        + "wait " + Math.round(p.p90) + ".");
+    s.appendChild(h);
+  });
+  const yl = mk("text", { x: M.l - 12, y: M.t - 11, class: "tick", "text-anchor": "end" });
+  yl.textContent = "days"; s.appendChild(yl);
+  document.getElementById("c-cost").appendChild(s);
+  table(document.getElementById("t-cost"),
+    ["Cost band", "Median days", "Slowest 10%", "Records"],
+    d.map(p => [p.band, p.median + " d", Math.round(p.p90) + " d", fmt(p.n)]));
+}
+
+/* --------------------------------------------------------- run */
+trend();
+bars("c-cen", D.censoring, p => p.pct_closed_1yr * 100, p => p.year, 100,
+  v => Math.round(v) + "%",
+  p => [p.year + " applications",
+        [["Closed within 1 yr", Math.round(p.pct_closed_1yr * 100) + "%"], ["Records", fmt(p.n)]],
+        p.pct_closed_1yr > .95 ? "Nothing slower could be in the file yet." : null]);
+bars("c-max", D.censoring, p => p.max_observed, p => p.year, 3600,
+  v => fmt(Math.round(v)),
+  p => [p.year + " applications",
+        [["Longest review in file", fmt(p.max_observed) + " days"], ["Records", fmt(p.n)]],
+        "Bounded by how long ago the year was, not by City performance."]);
+table(document.getElementById("t-cen"),
+  ["Application year", "Closed within 1 year", "Longest review in file", "Records"],
+  D.censoring.map(p => [p.year, Math.round(p.pct_closed_1yr * 100) + "%",
+    fmt(p.max_observed) + " d", fmt(p.n)]));
+district();
+cost();
+table(document.getElementById("t-types"),
+  ["Permit type", "Median days", "Slowest 10%", "Family", "Records"],
+  D.types.map(t => [t.type, t.median + " d", Math.round(t.p90) + " d", t.family, fmt(t.n)]));
+table(document.getElementById("t-qual"), ["Issue found", "Rows affected"],
+  D.quality.map(q => [q.metric, fmt(q.value)]));
+
+/* theme toggle */
+document.getElementById("theme").addEventListener("click", () => {
+  const r = document.documentElement;
+  const next = r.getAttribute("data-theme") === "dark" ? "light" : "dark";
+  r.setAttribute("data-theme", next);
+  try { localStorage.setItem("permit-theme", next); } catch (e) { /* blocked */ }
+  document.querySelectorAll("figure").forEach(f => f.innerHTML = "");
+  trend();
+  bars("c-cen", D.censoring, p => p.pct_closed_1yr * 100, p => p.year, 100,
+    v => Math.round(v) + "%",
+    p => [p.year + " applications",
+          [["Closed within 1 yr", Math.round(p.pct_closed_1yr * 100) + "%"], ["Records", fmt(p.n)]],
+          p.pct_closed_1yr > .95 ? "Nothing slower could be in the file yet." : null]);
+  bars("c-max", D.censoring, p => p.max_observed, p => p.year, 3600,
+    v => fmt(Math.round(v)),
+    p => [p.year + " applications",
+          [["Longest review in file", fmt(p.max_observed) + " days"], ["Records", fmt(p.n)]],
+          "Bounded by how long ago the year was, not by City performance."]);
+  district(); cost();
+});
+</script>

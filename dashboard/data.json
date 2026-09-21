@@ -1,0 +1,352 @@
+{
+ "trend": [
+  {
+   "year": 2017,
+   "raw": 26.0,
+   "n_raw": 40164,
+   "fair": 20.0,
+   "p90": 91.0,
+   "within30": 0.6581,
+   "n": 20740
+  },
+  {
+   "year": 2018,
+   "raw": 26.0,
+   "n_raw": 38697,
+   "fair": 19.0,
+   "p90": 68.0,
+   "within30": 0.6999,
+   "n": 19470
+  },
+  {
+   "year": 2019,
+   "raw": 28.0,
+   "n_raw": 36457,
+   "fair": 21.0,
+   "p90": 80.0,
+   "within30": 0.6507,
+   "n": 17766
+  },
+  {
+   "year": 2020,
+   "raw": 29.0,
+   "n_raw": 28079,
+   "fair": 22.0,
+   "p90": 93.0,
+   "within30": 0.6129,
+   "n": 13623
+  },
+  {
+   "year": 2021,
+   "raw": 31.0,
+   "n_raw": 30885,
+   "fair": 24.0,
+   "p90": 111.0,
+   "within30": 0.5899,
+   "n": 13827
+  },
+  {
+   "year": 2022,
+   "raw": 34.0,
+   "n_raw": 28253,
+   "fair": 29.0,
+   "p90": 116.0,
+   "within30": 0.5351,
+   "n": 13746
+  },
+  {
+   "year": 2023,
+   "raw": 30.0,
+   "n_raw": 24076,
+   "fair": 27.0,
+   "p90": 114.0,
+   "within30": 0.5613,
+   "n": 14098
+  },
+  {
+   "year": 2024,
+   "raw": 24.0,
+   "n_raw": 23175,
+   "fair": 20.0,
+   "p90": 93.0,
+   "within30": 0.6165,
+   "n": 16097
+  },
+  {
+   "year": 2025,
+   "raw": 19.0,
+   "n_raw": 17620,
+   "fair": 18.0,
+   "p90": 70.0,
+   "within30": 0.6687,
+   "n": 15959
+  },
+  {
+   "year": 2026,
+   "raw": 8.0,
+   "n_raw": 4046,
+   "fair": null,
+   "p90": null,
+   "within30": null,
+   "n": null
+  }
+ ],
+ "censoring": [
+  {
+   "year": 2017,
+   "pct_closed_1yr": 0.5164,
+   "max_observed": 3409,
+   "n": 40164
+  },
+  {
+   "year": 2018,
+   "pct_closed_1yr": 0.5031,
+   "max_observed": 2837,
+   "n": 38697
+  },
+  {
+   "year": 2019,
+   "pct_closed_1yr": 0.4873,
+   "max_observed": 2682,
+   "n": 36457
+  },
+  {
+   "year": 2020,
+   "pct_closed_1yr": 0.4852,
+   "max_observed": 2224,
+   "n": 28079
+  },
+  {
+   "year": 2021,
+   "pct_closed_1yr": 0.4477,
+   "max_observed": 1910,
+   "n": 30885
+  },
+  {
+   "year": 2022,
+   "pct_closed_1yr": 0.4865,
+   "max_observed": 1489,
+   "n": 28253
+  },
+  {
+   "year": 2023,
+   "pct_closed_1yr": 0.5856,
+   "max_observed": 1251,
+   "n": 24076
+  },
+  {
+   "year": 2024,
+   "pct_closed_1yr": 0.6946,
+   "max_observed": 877,
+   "n": 23175
+  },
+  {
+   "year": 2025,
+   "pct_closed_1yr": 0.9057,
+   "max_observed": 573,
+   "n": 17620
+  },
+  {
+   "year": 2026,
+   "pct_closed_1yr": 1.0,
+   "max_observed": 208,
+   "n": 4046
+  }
+ ],
+ "districts": [
+  {
+   "district": "East",
+   "n": 19028,
+   "all": 23.0,
+   "simple": 15.0,
+   "mid": 35.0,
+   "complex": 47.5
+  },
+  {
+   "district": "North",
+   "n": 30728,
+   "all": 23.0,
+   "simple": 15.0,
+   "mid": 31.0,
+   "complex": 35.0
+  },
+  {
+   "district": "South",
+   "n": 72317,
+   "all": 21.0,
+   "simple": 15.0,
+   "mid": 28.0,
+   "complex": 30.5
+  },
+  {
+   "district": "West",
+   "n": 23253,
+   "all": 21.0,
+   "simple": 20.0,
+   "mid": 34.0,
+   "complex": 50.0
+  }
+ ],
+ "cost_bands": [
+  {
+   "band": "under $25k",
+   "n": 12544,
+   "median": 17.0,
+   "p90": 89.0
+  },
+  {
+   "band": "$25k-100k",
+   "n": 12433,
+   "median": 20.0,
+   "p90": 85.0
+  },
+  {
+   "band": "$100k-500k",
+   "n": 10390,
+   "median": 28.0,
+   "p90": 86.0
+  },
+  {
+   "band": "$500k-5M",
+   "n": 3135,
+   "median": 34.0,
+   "p90": 112.0
+  },
+  {
+   "band": "over $5M",
+   "n": 174,
+   "median": 51.0,
+   "p90": 1036.3000000000018
+  }
+ ],
+ "types": [
+  {
+   "type": "Partial Permit",
+   "family": "Building",
+   "n": 658,
+   "median": 202.0,
+   "p90": 631.1000000000005
+  },
+  {
+   "type": "Demolition Folder (DM)",
+   "family": "Demolition",
+   "n": 3653,
+   "median": 52.0,
+   "p90": 206.80000000000018
+  },
+  {
+   "type": "Conditional Permit",
+   "family": "Building",
+   "n": 1613,
+   "median": 46.0,
+   "p90": 145.79999999999995
+  },
+  {
+   "type": "New Houses",
+   "family": "Building",
+   "n": 1895,
+   "median": 40.0,
+   "p90": 482.4000000000012
+  },
+  {
+   "type": "Building Additions/Alterations",
+   "family": "Building",
+   "n": 18497,
+   "median": 29.0,
+   "p90": 80.0
+  },
+  {
+   "type": "Mechanical(MS)",
+   "family": "Trade",
+   "n": 27438,
+   "median": 29.0,
+   "p90": 91.0
+  },
+  {
+   "type": "Plumbing(PS)",
+   "family": "Trade",
+   "n": 30349,
+   "median": 27.0,
+   "p90": 83.0
+  },
+  {
+   "type": "Fire/Security Upgrade",
+   "family": "Building",
+   "n": 3247,
+   "median": 26.0,
+   "p90": 117.40000000000009
+  },
+  {
+   "type": "Designated Structures",
+   "family": "Trade",
+   "n": 5164,
+   "median": 20.0,
+   "p90": 114.69999999999982
+  },
+  {
+   "type": "Small Residential Projects",
+   "family": "Building",
+   "n": 26568,
+   "median": 16.0,
+   "p90": 96.0
+  },
+  {
+   "type": "Temporary Structures",
+   "family": "Building",
+   "n": 755,
+   "median": 8.0,
+   "p90": 29.0
+  },
+  {
+   "type": "Drain and Site Service",
+   "family": "Trade",
+   "n": 25080,
+   "median": 1.0,
+   "p90": 38.0
+  }
+ ],
+ "kpi": {
+  "records": 145326,
+  "permits": 136241,
+  "median": 22.0,
+  "within30": 0.6276
+ },
+ "quality": [
+  {
+   "metric": "Source rows",
+   "value": 438949
+  },
+  {
+   "metric": "Distinct permits",
+   "value": 393521
+  },
+  {
+   "metric": "Row-count overstatement",
+   "value": 45428
+  },
+  {
+   "metric": "Cost field held a placeholder string",
+   "value": 222734
+  },
+  {
+   "metric": "Comma-formatted costs recovered",
+   "value": 51949
+  },
+  {
+   "metric": "Never issued",
+   "value": 34702
+  },
+  {
+   "metric": "Issued before applied",
+   "value": 21
+  },
+  {
+   "metric": "Dates in the future",
+   "value": 3
+  },
+  {
+   "metric": "Unknown district code",
+   "value": 8
+  }
+ ]
+}
